@@ -3,8 +3,36 @@ const path = require('path');
 const db = require('./config/connection');
 const routes = require('./routes');
 
+// import ApolloServer
+const { ApolloServer } = require('apollo-server-express');
+
+// import our typeDefs and resolvers
+const { typeDefs, resolvers } = require('./schemas');
+const { authMiddleware } = require('./utils/auth');
+
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+const startServer = async () => {
+  // create a new Apollo server and pass in our schema data
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: authMiddleware,
+  });
+
+  // Start the Apollo server
+  await server.start();
+
+  // integrate our Apollo server with the Express application as middleware
+  server.applyMiddleware({ app });
+
+  // log where we can go to test our GQL API
+  console.log(`Use GraphQL at http://localhost:${PORT}${server.graphqlPath}`);
+};
+
+// Initialize the Apollo server
+startServer();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -13,6 +41,11 @@ app.use(express.json());
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/build')));
 }
+
+// if we make a GET request to any location on the server that doesn't have an explicit route defined, respond with the production-ready React front-end code
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
 
 app.use(routes);
 
