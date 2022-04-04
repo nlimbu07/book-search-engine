@@ -1,8 +1,8 @@
 # book-search-engine
 Google Books API search engine built with a GraphQL API built with Apollo Server.
 
-## Github https://nlimbu07.github.io/book-search-engine/ 
-## Heroku-Link https://book-search-engine82.herokuapp.com/
+### Github https://nlimbu07.github.io/book-search-engine/ 
+### Heroku-Link https://book-search-engine82.herokuapp.com/
 ## Screenshot
 ![Application Screenshot](./client/src/image/image.png)
 
